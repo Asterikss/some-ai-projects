@@ -15,12 +15,12 @@ class Car{
         this.controls = new Controls();
 
 
-        this.sensor.update();
+        // this.sensor.update();
     }
 
     update(){
         this.#move();
-        // this.sensor.update();
+        this.sensor.update();
     }
 
     #move(){
