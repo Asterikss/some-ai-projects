@@ -14,13 +14,11 @@ class Car{
         this.sensor = new Sensor(this);
         this.controls = new Controls();
 
-
-        // this.sensor.update();
     }
 
-    update(){
+    update(roadBorders){
         this.#move();
-        this.sensor.update();
+        this.sensor.update(roadBorders);
     }
 
     #move(){
@@ -35,7 +33,7 @@ class Car{
             this.speed = this.maxspeed;
         }
         if(this.speed < -this.maxspeed/2){
-            this.speed = - this.maxspeed/2;
+            this.speed = -this.maxspeed/2;
         }
 
         if(this.speed > 0){
@@ -69,7 +67,7 @@ class Car{
         ctx.save();
         // translates the canvas origin point (0, 0) to the coordinates
         // moves the drawing position
-        ctx.translate(this.x,this.y);
+        ctx.translate(this.x, this.y);
         ctx.rotate(-this.angle);
 
         ctx.beginPath();
@@ -80,6 +78,8 @@ class Car{
             this.height
         );
         ctx.fill();
+
+        ctx.restore();
 
         this.sensor.draw(ctx);
     }
