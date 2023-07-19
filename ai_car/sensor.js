@@ -42,13 +42,15 @@ class Sensor{
         if(touches.length == 0){
             return null;
         }else{
-            const offsets=touches.map((item) => {
-                item.offset
-            });
-            const min_offset = Math.min(...offsets);
 
+            const offsets=touches.map((item) => {
+                return item.offset;
+            });
+
+            const min_offset = Math.min(...offsets);
+            
             return touches.find((touch) => {
-                touch.offset == min_offset
+                return touch.offset == min_offset
             });
         }
 
@@ -75,14 +77,30 @@ class Sensor{
 
 
     draw(ctx){
+
         for (let i = 0; i < this.rayCount; i++) {
+
+            let end = this.ray_endings[i];
+            if(this.sensor_readings[i]){
+                end = this.sensor_readings[i];
+            }
+
             ctx.beginPath();
             ctx.lineWidth = 2;
             ctx.strokeStyle = "yellow";
             ctx.moveTo(this.car.x, this.car.y);
+
+            ctx.lineTo(end.x, end.y);
+            ctx.stroke();
+
+            
+            ctx.beginPath();
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = "black";
+
+            ctx.moveTo(end.x, end.y);
             ctx.lineTo(this.ray_endings[i].x, this.ray_endings[i].y);
             ctx.stroke();
-            
         }
     }
 }
