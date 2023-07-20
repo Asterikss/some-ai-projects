@@ -40,3 +40,8 @@ function poly_intersecting(poly1, poly2){
 
     return false;
 }
+
+const CarType = Object.freeze({
+    PROTAGONIST: "protagonist",
+    DUMMY: "dummy"
+});
