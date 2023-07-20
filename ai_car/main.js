@@ -12,14 +12,16 @@ animate();
 
 function animate(){
     for (let i = 0; i < traffic.length; i++) {
-        traffic[i].update(road.borders);
+        traffic[i].update(road.borders, []);
         // traffic[i].update();
         
     }
-    car.update(road.borders);
+    car.update(road.borders, traffic);
     canvas.height = window.innerHeight;
 
     ctx.save();
+    // translates the canvas origin point (0, 0) to the coordinates
+    // moves the drawing position
     ctx.translate(0, -car.y+canvas.height*0.7);
 
     road.draw(ctx);

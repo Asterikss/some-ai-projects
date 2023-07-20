@@ -5,7 +5,6 @@ class Controls{
         this.right = false;
         this.reverse = false;
 
-        console.log(car_type);
         switch (car_type) {
             case "protagonist":
                 this.#addKeyboardListeners();

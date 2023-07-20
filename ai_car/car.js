@@ -13,28 +13,41 @@ class Car{
 
         this.damaged = false;
 
-        this.sensor = new Sensor(this);
-        console.log(car_type);
+        if(car_type == "protagonist"){
+            this.sensor = new Sensor(this);
+        }
         this.controls = new Controls(car_type);
 
 
     }
 
-    update(roadBorders){
+    update(roadBorders, traffic){
         if(!this.damaged){
             this.#move();
             this.polygon = this.#create_polygon();
-            this.damaged = this.#assess_damage(roadBorders);
+            this.damaged = this.#assess_damage(roadBorders, traffic);
         }
-        this.sensor.update(roadBorders);
+        if(this.sensor){
+            this.sensor.update(roadBorders, traffic);
+        }
     }
 
-    #assess_damage(roadBorders){
-        return roadBorders.some(boarder => {
+    #assess_damage(roadBorders, traffic){
+        const result = roadBorders.some(boarder => {
             if(poly_intersecting(this.polygon, boarder)){
                 return true;
             }
         });
+        
+        if(!result){
+            return traffic.some(traffic_obj => {
+                if(poly_intersecting(this.polygon, traffic_obj.polygon)){
+                    return true;
+                }
+            });
+        }
+
+        return false;
     }
 
     #create_polygon(){
@@ -117,26 +130,26 @@ class Car{
         this.y -= Math.cos(this.angle)*this.speed;
     }
 
-    old_draw(ctx){
-        ctx.save();
-        // translates the canvas origin point (0, 0) to the coordinates
-        // moves the drawing position
-        ctx.translate(this.x, this.y);
-        ctx.rotate(-this.angle);
-
-        ctx.beginPath();
-        ctx.rect(
-            -this.width/2,
-            -this.height/2,
-            this.width,
-            this.height
-        );
-        ctx.fill();
-
-        ctx.restore();
-
-        this.sensor.draw(ctx);
-    }
+    // old_draw(ctx){
+    //     ctx.save();
+    //     // translates the canvas origin point (0, 0) to the coordinates
+    //     // moves the drawing position
+    //     ctx.translate(this.x, this.y);
+    //     ctx.rotate(-this.angle);
+    //
+    //     ctx.beginPath();
+    //     ctx.rect(
+    //         -this.width/2,
+    //         -this.height/2,
+    //         this.width,
+    //         this.height
+    //     );
+    //     ctx.fill();
+    //
+    //     ctx.restore();
+    //
+    //     this.sensor.draw(ctx);
+    // }
 
     draw(ctx){
         if(this.damaged){
@@ -152,7 +165,10 @@ class Car{
             
         }
         ctx.fill();
-        this.sensor.draw(ctx);
+
+        if(this.sensor){
+            this.sensor.draw(ctx);
+        }
 
     }
 }
