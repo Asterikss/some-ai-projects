@@ -20,19 +20,20 @@ class Car{
     }
 
     update(roadBorders){
-        this.#move();
-        this.polygon = this.#create_polygon();
-        this.damaged = this.#assess_damage(roadBorders);
+        if(!this.damaged){
+            this.#move();
+            this.polygon = this.#create_polygon();
+            this.damaged = this.#assess_damage(roadBorders);
+        }
         this.sensor.update(roadBorders);
     }
 
     #assess_damage(roadBorders){
-        roadBorders.forEach(boarder => {
+        return roadBorders.some(boarder => {
             if(poly_intersecting(this.polygon, boarder)){
                 return true;
             }
         });
-        return false;
     }
 
     #create_polygon(){
@@ -115,7 +116,7 @@ class Car{
         this.y -= Math.cos(this.angle)*this.speed;
     }
 
-    draw2(ctx){
+    old_draw(ctx){
         ctx.save();
         // translates the canvas origin point (0, 0) to the coordinates
         // moves the drawing position
@@ -137,6 +138,12 @@ class Car{
     }
 
     draw(ctx){
+        if(this.damaged){
+            ctx.fillStyle = "orange";
+        }else{
+            ctx.fillStyle = "black";
+
+        }
         ctx.beginPath();
         ctx.moveTo(this.polygon[0].x, this.polygon[0].y);
         for (let i = 1; i < this.polygon.length; i++) {
