@@ -7,6 +7,10 @@ class Controls{
 
         switch (car_type) {
             case "protagonist":
+                // console.log("here");
+                // this.#addKeyboardListeners();
+                break;
+            case "human":
                 this.#addKeyboardListeners();
                 break;
             case "dummy":

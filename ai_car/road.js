@@ -34,13 +34,8 @@ class Road{
         ctx.strokeStyle = "white";
 
 
-        // for (let i = 0; i < this.laneCount + 1; i++) {
         for (let i = 1; i < this.laneCount; i++) {
-            // if (i > 0 && i < this.laneCount){
             ctx.setLineDash([20, 20]);
-            // }else{
-            //     ctx.setLineDash([]);
-            // }
             ctx.beginPath();
             ctx.moveTo(this.left + ((this.width/this.laneCount) * i), this.top);
             ctx.lineTo(this.left + ((this.width/this.laneCount) * i), this.bottom);

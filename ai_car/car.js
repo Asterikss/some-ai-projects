@@ -14,8 +14,11 @@ class Car{
         this.damaged = false;
         this.default_color = default_color;
 
+        this.use_network = car_type=="protagonist";
+
         if(car_type == "protagonist"){
             this.sensor = new Sensor(this);
+            this.network = new NeuralNetwork([this.sensor.rayCount, 6, 4]);
         }
         this.controls = new Controls(car_type);
 
@@ -30,6 +33,19 @@ class Car{
         }
         if(this.sensor){
             this.sensor.update(roadBorders, traffic);
+            const offsets = this.sensor.sensor_readings.map(reading => reading==null?0:1-reading.offset);
+            const outputs = NeuralNetwork.feed_forward(offsets, this.network);
+            console.log(outputs);
+
+            if(this.use_network){
+                // console.log("here2");
+                this.controls.forward = outputs[0];
+                // console.log(this.controls.forward);
+                this.controls.left = outputs[1];
+                this.controls.right = outputs[2];
+                this.controls.reverse = outputs[3];
+                // why does this also disable the manual controls by itself?
+            }
         }
     }
 
