@@ -1,7 +1,6 @@
 class NeuralNetwork{
     constructor(neuron_counts){
         this.layers = [];
-        // console.log(neuron_counts);
         for (let i = 0; i < neuron_counts.length - 1; i++) {
             this.layers.push(new Layer(neuron_counts[i], neuron_counts[i + 1]));
         }
@@ -26,7 +25,6 @@ class NeuralNetwork{
     }
 }
 
-// TODO borders do not damage the car
 
 class Layer{
     constructor(input_count, output_count){
@@ -52,16 +50,8 @@ class Layer{
         }
 
         for (let i = 0; i < layer.biases.length; i++) {
-            // console.log("a");
-            // const a = (Math.random() * 2) - 1;
-            // console.log(a);
             layer.biases[i] = (Math.random() * 2) - 1;
-            // layer.biases[i] = a;
-            // console.log(layer.biases[i]);
-            
-            
         }
-        // console.log(layer.biases)
         
     }
 

@@ -38,9 +38,7 @@ class Car{
             console.log(outputs);
 
             if(this.use_network){
-                // console.log("here2");
                 this.controls.forward = outputs[0];
-                // console.log(this.controls.forward);
                 this.controls.left = outputs[1];
                 this.controls.right = outputs[2];
                 this.controls.reverse = outputs[3];
@@ -64,7 +62,7 @@ class Car{
             });
         }
 
-        return false;
+        return result;
     }
 
     #create_polygon(){
