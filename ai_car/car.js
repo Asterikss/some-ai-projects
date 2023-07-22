@@ -1,5 +1,5 @@
 class Car{
-    constructor(x, y, width, height, car_type, max_speed=3){
+    constructor(x, y, width, height, car_type, max_speed=3, default_color="red"){
         this.x = x;
         this.y = y;
         this.width = width;
@@ -12,6 +12,7 @@ class Car{
         this.angle = 0;
 
         this.damaged = false;
+        this.default_color = default_color;
 
         if(car_type == "protagonist"){
             this.sensor = new Sensor(this);
@@ -155,7 +156,8 @@ class Car{
         if(this.damaged){
             ctx.fillStyle = "orange";
         }else{
-            ctx.fillStyle = "black";
+            // ctx.fillStyle = "black";
+            ctx.fillStyle = this.default_color;
 
         }
         ctx.beginPath();
