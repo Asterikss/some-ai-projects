@@ -1,4 +1,4 @@
-class Level{
+class Layer{
     construcotr(input_count, output_count){
         this.inputs = new Array(input_count);
         this.outputs = new Array(output_count);
@@ -9,6 +9,49 @@ class Level{
             this.weights[i] = new Array(output_count);
             
         }
+
+        Layer.#randomize(this);
+    }
+
+    static #randomize(layer){
+        for (let i = 0; i < layer.inputs.length; i++) {
+            for (let j = 0; j < layer.outputs.length; j++) {
+                layer.weights[i][j] = (Math.random() * 2) - 1;
+                
+            }
+        }
+
+        for (let i = 0; i < layer.biases; i++) {
+            layer.biases[i] = (Math.random() * 2) - 1;
+            
+            
+        }
+        
+    }
+
+    static feed_forward(given_inputs, layer){
+        for (let i = 0; i < layer.inputs.length; i++) {
+            layer.inputs[i] = given_inputs[i];
+        }
+
+        for (let i = 0; i < layer.outputs.length; i++) {
+            const result = 0;
+            for (let j = 0; j < layer.inputs.length; j++) {
+                // result += (layer.inputs[j] * layer.weights[i][j]) + layer.biases[i];
+                result += (layer.inputs[j] * layer.weights[j][i]) - layer.biases[i];
+            }
+            
+            if(result > 0){
+                layer.outputs[i] = 1;
+            }eles{
+                layer.outputs[i] = 0;
+            }
+            
+        }
+
+        return layer.outputs;
     }
 
 }
+
+
