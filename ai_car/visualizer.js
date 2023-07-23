@@ -7,10 +7,30 @@ class Visualizer{
         const width = ctx.canvas.width - margin * 2;
         const height = ctx.canvas.height - margin * 2;
 
-        Visualizer.draw_layer(ctx, network.layers[0], left, top, width, height);
+        // console.log(network.layers);
+        const layer_height_diff = height/(network.layers.length);
+        // console.log(layer_height_diff)
+
+        // won't be pretty for drawing just 1 layer
+        // for (let i = 0; i < network.layers.length; i++) {
+        let counter = 0;
+        let a = network.layers.length - 1;
+        console.log(a);
+        for (let i = network.layers.length - 1; i > -1; i--) {
+            console.log("aa");
+            const layer_height = top + (layer_height_diff * counter);
+            Visualizer.draw_layer(ctx, network.layers[i], left, layer_height, width, layer_height_diff);
+            counter++;
+        }
+
+        // const layer_height = top + (layer_height_diff * i);
+
+        // Visualizer.draw_layer(ctx, network.layers[1], left, layer_height, width, layer_height_diff);
+
+        // Visualizer.draw_layer(ctx, network.layers[1], left, top, width, height);
     }
 
-    // won't be pretty for 1 perceptron layers
+    // won't be pretty for drawing 1 perceptron layers
     static draw_layer(ctx, layer, left, top, width, height){
         const right = left + width;
         const bottom = top + height;
