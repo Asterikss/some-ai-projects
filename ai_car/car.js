@@ -16,7 +16,7 @@ class Car{
 
         this.use_network = car_type=="protagonist";
 
-        if(car_type == "protagonist"){
+        if(car_type == "protagonist" || car_type == "human"){
             this.sensor = new Sensor(this);
             this.network = new NeuralNetwork([this.sensor.rayCount, 6, 4]);
         }
