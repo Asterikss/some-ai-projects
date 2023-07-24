@@ -63,11 +63,13 @@ class Layer{
         for (let i = 0; i < layer.outputs.length; i++) {
             let result = 0;
             for (let j = 0; j < layer.inputs.length; j++) {
-                // result += (layer.inputs[j] * layer.weights[i][j]) + layer.biases[i];
-                result += (layer.inputs[j] * layer.weights[j][i]) - layer.biases[i];
+                // result += (layer.inputs[j] * layer.weights[j][i]) + layer.biases[i];
+                // result += (layer.inputs[j] * layer.weights[j][i]) - layer.biases[i];
+                result += layer.inputs[j] * layer.weights[j][i];
             }
             
-            if(result > 0){
+            // if(result > 0){
+            if(result > layer.biases[i]){
                 layer.outputs[i] = 1;
             }else{
                 layer.outputs[i] = 0;

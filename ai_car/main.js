@@ -10,17 +10,19 @@ const road = new Road(canvas.width/2, canvas.width*0.9);
 
 // const car = new Car(road.getLaneCenter(1), 100, 30, 50, CarType.PROTAGONIST, undefined, "blue");
 // const car = new Car(road.getLaneCenter(1), 100, 30, 50, CarType.HUMAN, undefined, "blue");
-const N = 10;
+const N = 30;
 const cars = generate_cars(N);
 
 let best_car = cars[0];
 
-if(localStorage.getItem("best_brain"){
+if(localStorage.getItem("best_brain")){
     best_car.network = JSON.parse(localStorage.getItem("best_brain"));
 }
 
 const traffic = [
-    new Car(road.getLaneCenter(1), -100, 30, 50, CarType.DUMMY, 2)
+    new Car(road.getLaneCenter(1), -100, 30, 50, CarType.DUMMY, 2),
+    // new Car(road.getLaneCenter(0), -300, 30, 50, CarType.DUMMY, 2),
+    // new Car(road.getLaneCenter(2), -300, 30, 50, CarType.DUMMY, 2)
 ];
 
 animate();
