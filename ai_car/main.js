@@ -7,8 +7,8 @@ const car_ctx = canvas.getContext("2d");
 const network_ctx = network_canvas.getContext("2d");
 
 const road = new Road(canvas.width/2, canvas.width*0.9);
-// const car = new Car(road.getLaneCenter(1), 100, 30, 50, CarType.PROTAGONIST, undefined, "blue");
-const car = new Car(road.getLaneCenter(1), 100, 30, 50, CarType.HUMAN, undefined, "blue");
+const car = new Car(road.getLaneCenter(1), 100, 30, 50, CarType.PROTAGONIST, undefined, "blue");
+// const car = new Car(road.getLaneCenter(1), 100, 30, 50, CarType.HUMAN, undefined, "blue");
 const traffic = [
     new Car(road.getLaneCenter(2), -100, 30, 50, CarType.DUMMY, 2)
 ];
@@ -16,7 +16,7 @@ const traffic = [
 animate();
 
 // Visualizer.draw_network(network_ctx, car.network);
-function animate(){
+function animate(time){
     for (let i = 0; i < traffic.length; i++) {
         traffic[i].update(road.borders, []);
         // traffic[i].update();
@@ -40,6 +40,8 @@ function animate(){
     car.draw(car_ctx);
 
     car_ctx.restore();
+
+    network_ctx.lineDashOffset = -time/50;
 
     Visualizer.draw_network(network_ctx, car.network);
 
