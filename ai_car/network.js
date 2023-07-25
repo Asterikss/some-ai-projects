@@ -23,6 +23,24 @@ class NeuralNetwork{
 
         return outputs;
     }
+
+    static mutate(network, weight=1){
+        network.layers.forEach(layer => {
+            for (let i = 0; i < layer.biases.length; i++) {
+                layer.biases[i] = layer.biases[i] + (((Math.random()*2) - 1) * weight);
+                // layer.biases[i] = lerp(
+                //     level.biases[i],
+                //     Math.random()*2 - 1,
+                //     weight
+                // );
+            }
+            for (let i = 0; i < layer.weights.length; i++) {
+                for (let j = 0; j < layer.weights[i].length; j++) {
+                    layer.weights[i]
+                }
+            }
+        });
+    }
 }
 
 
