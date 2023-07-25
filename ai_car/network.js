@@ -4,21 +4,13 @@ class NeuralNetwork{
         for (let i = 0; i < neuron_counts.length - 1; i++) {
             this.layers.push(new Layer(neuron_counts[i], neuron_counts[i + 1]));
         }
-        // for (let i = 0; i < this.layers.length; i++) {
-        //     console.log("layer: " + i);
-        //     console.log(this.layers[i].inputs);
-        //     console.log(this.layers[i].outputs);
-        //     console.log(this.layers[i].weights);
-        //     console.log(this.layers[i].biases);
-        // }
     }
 
     static feed_forward(given_inputs, network){
         let outputs = Layer.feed_forward(given_inputs, network.layers[0]);
-        // console.log(outputs);
+
         for (let i = 1; i < network.layers.length; i++) {
             outputs = Layer.feed_forward(outputs, network.layers[i]);
-            // console.log(outputs);
         }
 
         return outputs;
@@ -99,5 +91,3 @@ class Layer{
     }
 
 }
-
-

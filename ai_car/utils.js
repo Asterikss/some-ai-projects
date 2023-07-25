@@ -44,9 +44,7 @@ function poly_intersecting(poly1, poly2){
 function get_rgba_weight(weight){
     const alpha = Math.abs(weight);
     const R = weight>0?0:255;
-    // const G = R;
     const G = weight>0?255:0; 
-    // const B = weight<0?255:0;
     const B = 0;
 
     return "rgba("+R+", "+G+", "+B+", "+alpha+")";

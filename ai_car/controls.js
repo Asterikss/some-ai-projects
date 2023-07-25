@@ -7,7 +7,6 @@ class Controls{
 
         switch (car_type) {
             case "protagonist":
-                // this.#addKeyboardListeners();
                 break;
             case "human":
                 this.#addKeyboardListeners();
@@ -21,7 +20,6 @@ class Controls{
     #addKeyboardListeners(){
         document.onkeydown = (event)=>{
             switch(event.key){
-                //hjkl
                 case "ArrowLeft":
                     this.left = true;
                     break;
@@ -39,7 +37,6 @@ class Controls{
 
         document.onkeyup = (event)=>{
             switch(event.key){
-                //hjkl
                 case "ArrowLeft":
                     this.left = false;
                     break;
