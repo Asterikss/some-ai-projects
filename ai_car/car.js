@@ -35,14 +35,12 @@ class Car{
             this.sensor.update(roadBorders, traffic);
             const offsets = this.sensor.sensor_readings.map(reading => reading==null?0:1-reading.offset);
             const outputs = NeuralNetwork.feed_forward(offsets, this.network);
-            // console.log(outputs);
 
             if(this.use_network){
                 this.controls.forward = outputs[0];
                 this.controls.left = outputs[1];
                 this.controls.right = outputs[2];
                 this.controls.reverse = outputs[3];
-                // why does this also disable the manual controls by itself?
             }
         }
     }
@@ -69,13 +67,9 @@ class Car{
         const points = [];
         const half_radious = Math.hypot(this.width, this.height) / 2;
 
-        // console.log("half_radious " + half_radious);
         const sin_alfa = this.width / (half_radious * 2);
-        // console.log("sin_alfa " + sin_alfa);
         const angle_rad = Math.asin(sin_alfa);
-            // const alpha = Math.atan2(this.width, this.height);
-        // console.log(angle_rad);
-        // console.log(alpha);
+        // const alpha = Math.atan2(this.width, this.height);
     
         // top right
         points.push({
@@ -144,27 +138,6 @@ class Car{
         this.x -= Math.sin(this.angle)*this.speed;
         this.y -= Math.cos(this.angle)*this.speed;
     }
-
-    // old_draw(ctx){
-    //     ctx.save();
-    //     // translates the canvas origin point (0, 0) to the coordinates
-    //     // moves the drawing position
-    //     ctx.translate(this.x, this.y);
-    //     ctx.rotate(-this.angle);
-    //
-    //     ctx.beginPath();
-    //     ctx.rect(
-    //         -this.width/2,
-    //         -this.height/2,
-    //         this.width,
-    //         this.height
-    //     );
-    //     ctx.fill();
-    //
-    //     ctx.restore();
-    //
-    //     this.sensor.draw(ctx);
-    // }
 
     draw(ctx, draw_sensor=false){
         if(this.damaged){

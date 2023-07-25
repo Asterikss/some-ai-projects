@@ -2,7 +2,6 @@ body{
     margin:0;
     background:darkgrey;
     overflow:hidden;
-    /* text-align:center; */
     display:flex;
     justify-content:center;
     align-items:center;

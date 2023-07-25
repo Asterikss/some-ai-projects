@@ -31,8 +31,8 @@ const traffic = [
 
     new Car(road.getLaneCenter(0), -500, 30, 50, CarType.DUMMY, 2),
     new Car(road.getLaneCenter(1), -500, 30, 50, CarType.DUMMY, 2),
-    // new Car(road.getLaneCenter(0), -700, 30, 50, CarType.DUMMY, 2),
-    // new Car(road.getLaneCenter(1), -700, 30, 50, CarType.DUMMY, 2)
+    // new Car(road.getLaneCenter(1), -700, 30, 50, CarType.DUMMY, 2),
+    // new Car(road.getLaneCenter(2), -700, 30, 50, CarType.DUMMY, 2)
 ];
 
 animate();
@@ -72,7 +72,6 @@ function animate(time){
     car_ctx.save();
     // translates the canvas origin point (0, 0) to the coordinates
     // moves the drawing position
-    // car_ctx.translate(0, -car.y+canvas.height*0.7);
     car_ctx.translate(0, -best_car.y+canvas.height*0.7);
 
     road.draw(car_ctx);
@@ -87,7 +86,6 @@ function animate(time){
     }
     car_ctx.globalAlpha = 1;
     best_car.draw(car_ctx, true);
-    // car.draw(car_ctx);
 
     car_ctx.restore();
 
