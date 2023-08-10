@@ -22,6 +22,9 @@ class Car{
         }
         this.controls = new Controls(car_type);
 
+        this.img = new Image();
+        this.img.src = "car.png";
+
 
     }
 
@@ -140,6 +143,7 @@ class Car{
     }
 
     draw(ctx, draw_sensor=false){
+        /* Drawing cars using just polygons
         if(this.damaged){
             ctx.fillStyle = "orange";
         }else{
@@ -153,6 +157,13 @@ class Car{
             
         }
         ctx.fill();
+        */
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.rotate(-this.angle);
+        ctx.drawImage(this.img, -this.width/2, -this.height/2, this.width, this.height);
+        ctx.restore();
+
 
         if(this.sensor && draw_sensor){
             this.sensor.draw(ctx);
