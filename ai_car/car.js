@@ -88,7 +88,7 @@ class Car{
 
         const sin_alfa = this.width / (half_radious * 2);
         const angle_rad = Math.asin(sin_alfa);
-        // const alpha = Math.atan2(this.width, this.height);
+        // or const alpha = Math.atan2(this.width, this.height);
     
         // top right
         points.push({

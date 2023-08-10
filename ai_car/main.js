@@ -8,7 +8,7 @@ const network_ctx = network_canvas.getContext("2d");
 
 const road = new Road(canvas.width/2, canvas.width*0.9);
 
-const N = 130;
+const N = 60;
 const cars = generate_cars(N);
 
 let best_car = cars[0];
@@ -24,13 +24,13 @@ if(localStorage.getItem("best_brain")){
 }
 
 const traffic = [
-    new Car(road.getLaneCenter(0.5), -100, 30, 50, CarType.DUMMY, 2),
-    new Car(road.getLaneCenter(1), -100, 30, 50, CarType.DUMMY, 2),
-    new Car(road.getLaneCenter(0), -300, 30, 50, CarType.DUMMY, 2),
-    new Car(road.getLaneCenter(2), -300, 30, 50, CarType.DUMMY, 2),
+    new Car(road.getLaneCenter(0.5), -100, 30, 50, CarType.DUMMY, 2, "red"),
+    new Car(road.getLaneCenter(1), -100, 30, 50, CarType.DUMMY, 2, "purple"),
+    new Car(road.getLaneCenter(0), -300, 30, 50, CarType.DUMMY, 2, "cornflowerblue"),
+    new Car(road.getLaneCenter(2), -300, 30, 50, CarType.DUMMY, 2, "violet"),
 
-    new Car(road.getLaneCenter(0), -500, 30, 50, CarType.DUMMY, 2),
-    new Car(road.getLaneCenter(1), -500, 30, 50, CarType.DUMMY, 2),
+    new Car(road.getLaneCenter(0), -500, 30, 50, CarType.DUMMY, 2, "goldenrod"),
+    new Car(road.getLaneCenter(1), -500, 30, 50, CarType.DUMMY, 2, "fuchsia"),
     // new Car(road.getLaneCenter(1), -700, 30, 50, CarType.DUMMY, 2),
     // new Car(road.getLaneCenter(2), -700, 30, 50, CarType.DUMMY, 2)
 ];
@@ -47,9 +47,9 @@ function discard(){
 
 function generate_cars(N){
     const cars = [];
-    cars.push(new Car(road.getLaneCenter(1), 100, 30, 50, CarType.PROTAGONIST, undefined, "brown"));
+    cars.push(new Car(road.getLaneCenter(1), 100, 30, 50, CarType.PROTAGONIST, undefined, "green"));
     for (let i = 1; i < N; i++) {
-        cars.push(new Car(road.getLaneCenter(1), 100, 30, 50, CarType.PROTAGONIST, undefined, "blue"));
+        cars.push(new Car(road.getLaneCenter(1), 100, 30, 50, CarType.PROTAGONIST, undefined, "coral"));
     }
     return cars;
 }
