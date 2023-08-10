@@ -25,6 +25,22 @@ class Car{
         this.img = new Image();
         this.img.src = "car.png";
 
+        this.mask = document.createElement("canvas");
+
+        this.mask.width = width;
+        this.mask.height = height;
+
+        const mask_ctx = this.mask.getContext("2d");
+        this.img.onload=()=>{
+            mask_ctx.fillStyle = default_color;
+            mask_ctx.rect(0, 0, this.width, this.height);
+            mask_ctx.fill();
+
+            mask_ctx.globalCompositeOperation = "destination-atop";
+            mask_ctx.drawImage(this.img, 0, 0, this.width, this.height);
+        }
+
+
 
     }
 
@@ -161,7 +177,14 @@ class Car{
         ctx.save();
         ctx.translate(this.x, this.y);
         ctx.rotate(-this.angle);
+
+        if(!this.damaged){
+            ctx.drawImage(this.mask, -this.width/2, -this.height/2, this.width, this.height);
+            ctx.globalCompositeOperation = "multiply";
+        }
+
         ctx.drawImage(this.img, -this.width/2, -this.height/2, this.width, this.height);
+
         ctx.restore();
 
 
