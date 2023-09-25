@@ -39,12 +39,14 @@ Xtr, Ytr = build_dataset(words[:n1], block_size)
 Xdev, Ydev = build_dataset(words[n1:n2], block_size)
 Xtest, Ytest = build_dataset(words[n2:], block_size)
 
+n_embed = 10
+n_hidden = 100
 
-g = torch.Generator().manual_seed(420)
-C = torch.randn((27, 10), generator=g)
-W1 = torch.randn((30, 100), generator=g)
-b1 = torch.randn(100, generator=g)
-W2 = torch.randn((100, 27), generator=g)
+g = torch.Generator().manual_seed(500)
+C = torch.randn((27, n_embed), generator=g)
+W1 = torch.randn((n_embed * block_size, n_hidden), generator=g)
+b1 = torch.randn(n_hidden, generator=g)
+W2 = torch.randn((n_hidden, 27), generator=g)
 b2 = torch.randn(27, generator=g)
 parameters = [C, W1, b1, W2, b2]
 
@@ -60,9 +62,13 @@ for p in parameters:
 # stepi = []
 
 lr = 0.1
-print("Training ...")
-# for i in range(200_000):
-for i in range(10_000):
+n_iters = 10_000
+# n_iters = 200_000
+if n_iters == 10_000:
+    print(f"Training for fewer iterations ({n_iters})")
+
+print("\nTraining ...")
+for i in range(n_iters):
     # minibach
     ix = torch.randint(0, Xtr.shape[0], (90,))
 
@@ -92,7 +98,7 @@ for i in range(10_000):
     # lri.append(lre[i])
     # lossi.append(loss.log10().item())
     # stepi.append(i)
-print("...Finished")
+print("...Finished\n")
 
 emb = C[Xdev]
 h = torch.tanh(emb.view(-1, 30) @ W1 + b1)
@@ -101,7 +107,7 @@ loss = F.cross_entropy(logits, Ydev)
 print(f"Loss for valid split {loss}")
 
 
-g = torch.Generator().manual_seed(420)
+g = torch.Generator().manual_seed(500)
 for _ in range(20):
     out = []
     context = [0] * block_size  # initialize with all ...
