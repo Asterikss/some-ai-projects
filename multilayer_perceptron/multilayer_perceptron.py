@@ -47,15 +47,17 @@ C = torch.randn((27, n_embed), generator=g)
 # https://pytorch.org/docs/stable/nn.init.html
 W1 = torch.randn((n_embed * block_size, n_hidden), generator=g) * (5/3) / ((n_embed * block_size)**0.5)
 # W1 = torch.randn((n_embed * block_size, n_hidden), generator=g) * 0.02
-b1 = torch.randn(n_hidden, generator=g) * 0.01
+# b1 = torch.randn(n_hidden, generator=g) * 0.01 # no need to add bias. It will not do anything since there is bn layer after it
 W2 = torch.randn((n_hidden, 27), generator=g) * 0.01
 b2 = torch.randn(27, generator=g) * 0
 
 bngain = torch.ones((1, n_hidden))
 bnbias = torch.zeros((1, n_hidden))
+bnmean_running = torch.zeros((1, n_hidden))
+bnstd_running = torch.ones((1, n_hidden))
 
-parameters = [C, W1, b1, W2, b2, bngain, bnbias]
-# parameters = [C, W1, b1, W2, b2,]
+# parameters = [C, W1, b1, W2, b2, bngain, bnbias]
+parameters = [C, W1, W2, b2, bngain, bnbias]
 
 print(f"Number of parameters: {sum(p.nelement() for p in parameters)}")
 
@@ -83,9 +85,19 @@ for i in range(n_iters):
     # forward
     emb = C[Xtr[ix]]
     # h = torch.tanh(emb.view(-1, n_embed * block_size) @ W1 + b1)
-    hpreact = emb.view(-1, n_embed * block_size) @ W1 + b1
+    hpreact = emb.view(-1, n_embed * block_size) @ W1 # + b1
 
-    hpreact = bngain * ((hpreact - hpreact.mean(0, keepdim=True)) / hpreact.std(0, keepdim=True)) + bnbias
+    bnmeani = hpreact.mean(0, keepdim=True)
+    bnstdi = hpreact.std(0, keepdim=True)
+
+    # hpreact = bngain * ((hpreact - hpreact.mean(0, keepdim=True)) / hpreact.std(0, keepdim=True)) + bnbias
+    hpreact = bngain * ((hpreact - bnmeani) / bnstdi) + bnbias # very small epsilon can be added to bnstdi (1e-5)
+
+    with torch.no_grad():
+        bnmean_running = bnmean_running * 0.999 + bnmeani * 0.001
+        bnstd_running = bnstd_running * 0.999 + bnstdi * 0.001
+
+
 
     h = torch.tanh(hpreact)
 
@@ -114,14 +126,15 @@ for i in range(n_iters):
     # lossi.append(loss.log10().item())
     # stepi.append(i)
 print("...Finished\n")
+# print(b1.grad)
 
-bnmean, bnstd = None, None
-with torch.no_grad():
-    emb = C[Xtr]
-    hpreact = emb.view(emb.shape[0], -1) @ W1 + b1
-    bnmean = hpreact.mean(0, keepdim=True)
-    bnstd = hpreact.std(0, keepdim=True)
-print(bnmean.shape, bnstd.shape)
+# bnmean, bnstd = None, None
+# with torch.no_grad():
+#     emb = C[Xtr]
+#     hpreact = emb.view(emb.shape[0], -1) @ W1 + b1
+#     bnmean = hpreact.mean(0, keepdim=True)
+#     bnstd = hpreact.std(0, keepdim=True)
+# print(bnmean.shape, bnstd.shape)
 
 with torch.no_grad():
     # print(f"{Xdev!r}")
@@ -129,13 +142,14 @@ with torch.no_grad():
     # print("2222222")
     # print(emb.shape)
     # print((emb.view(-1, n_embed * block_size) @ W1 + b1).shape)
-    hpreact = emb.view(-1, n_embed * block_size) @ W1 + b1
+    hpreact = emb.view(-1, n_embed * block_size) @ W1 # + b1
     # print((hpreact - hpreact.mean(0, keepdim=True)).shape)
     # print(((hpreact - hpreact.mean(0, keepdim=True)) / hpreact.std(0, keepdim=True)).shape)
     # print(bngain.shape)
     # print("2222222")
     # hpreact = bngain * ((hpreact - hpreact.mean(0, keepdim=True)) / hpreact.std(0, keepdim=True)) + bnbias
-    hpreact = bngain * ((hpreact - bnmean) / bnstd) + bnbias
+    # hpreact = bngain * ((hpreact - bnmean) / bnstd) + bnbias
+    hpreact = bngain * ((hpreact - bnmean_running) / bnstd_running) + bnbias
 
     h = torch.tanh(hpreact)
     # h = torch.tanh(emb.view(-1, n_embed * block_size) @ W1 + b1)
@@ -150,7 +164,7 @@ for _ in range(20):
     context = [0] * block_size  # initialize with all ...
     while True:
         emb = C[torch.tensor([context])]  # (1,block_size,d) 1, 3, 10
-        hpreact = emb.view(1, -1) @ W1 + b1
+        hpreact = emb.view(1, -1) @ W1 # + b1
             # print("a----")
             # print(f"{hpreact!r}")
             # print(f"{hpreact.shape}")
@@ -174,7 +188,8 @@ for _ in range(20):
         # print("-~~-")
         # print("-~~-")
 
-        hpreact = bngain * ((hpreact - bnmean) / bnstd) + bnbias
+        # hpreact = bngain * ((hpreact - bnmean) / bnstd) + bnbias
+        hpreact = bngain * ((hpreact - bnmean_running) / bnstd_running) + bnbias
             # print(f"{hpreact!r}")
             # print("----")
         h = torch.tanh(hpreact)
