@@ -44,11 +44,18 @@ n_hidden = 100
 
 g = torch.Generator().manual_seed(500)
 C = torch.randn((27, n_embed), generator=g)
-W1 = torch.randn((n_embed * block_size, n_hidden), generator=g)
-b1 = torch.randn(n_hidden, generator=g)
-W2 = torch.randn((n_hidden, 27), generator=g)
-b2 = torch.randn(27, generator=g)
-parameters = [C, W1, b1, W2, b2]
+# https://pytorch.org/docs/stable/nn.init.html
+W1 = torch.randn((n_embed * block_size, n_hidden), generator=g) * (5/3) / ((n_embed * block_size)**0.5)
+# W1 = torch.randn((n_embed * block_size, n_hidden), generator=g) * 0.02
+b1 = torch.randn(n_hidden, generator=g) * 0.01
+W2 = torch.randn((n_hidden, 27), generator=g) * 0.01
+b2 = torch.randn(27, generator=g) * 0
+
+bngain = torch.ones((1, n_hidden))
+bnbias = torch.zeros((1, n_hidden))
+
+parameters = [C, W1, b1, W2, b2, bngain, bnbias]
+# parameters = [C, W1, b1, W2, b2,]
 
 print(f"Number of parameters: {sum(p.nelement() for p in parameters)}")
 
@@ -62,7 +69,8 @@ for p in parameters:
 # stepi = []
 
 lr = 0.1
-n_iters = 10_000
+# n_iters = 5_000
+n_iters = 100
 # n_iters = 200_000
 if n_iters == 10_000:
     print(f"Training for fewer iterations ({n_iters})")
@@ -74,7 +82,14 @@ for i in range(n_iters):
 
     # forward
     emb = C[Xtr[ix]]
-    h = torch.tanh(emb.view(-1, 30) @ W1 + b1)
+    # h = torch.tanh(emb.view(-1, n_embed * block_size) @ W1 + b1)
+    hpreact = emb.view(-1, n_embed * block_size) @ W1 + b1
+
+    hpreact = bngain * ((hpreact - hpreact.mean(0, keepdim=True)) / hpreact.std(0, keepdim=True)) + bnbias
+
+    h = torch.tanh(hpreact)
+
+
     logits = h @ W2 + b2
 
     # counts = logits.exp()
@@ -100,11 +115,33 @@ for i in range(n_iters):
     # stepi.append(i)
 print("...Finished\n")
 
-emb = C[Xdev]
-h = torch.tanh(emb.view(-1, 30) @ W1 + b1)
-logits = h @ W2 + b2
-loss = F.cross_entropy(logits, Ydev)
-print(f"Loss for valid split {loss}")
+bnmean, bnstd = None, None
+with torch.no_grad():
+    emb = C[Xtr]
+    hpreact = emb.view(emb.shape[0], -1) @ W1 + b1
+    bnmean = hpreact.mean(0, keepdim=True)
+    bnstd = hpreact.std(0, keepdim=True)
+print(bnmean.shape, bnstd.shape)
+
+with torch.no_grad():
+    # print(f"{Xdev!r}")
+    emb = C[Xdev]
+    # print("2222222")
+    # print(emb.shape)
+    # print((emb.view(-1, n_embed * block_size) @ W1 + b1).shape)
+    hpreact = emb.view(-1, n_embed * block_size) @ W1 + b1
+    # print((hpreact - hpreact.mean(0, keepdim=True)).shape)
+    # print(((hpreact - hpreact.mean(0, keepdim=True)) / hpreact.std(0, keepdim=True)).shape)
+    # print(bngain.shape)
+    # print("2222222")
+    # hpreact = bngain * ((hpreact - hpreact.mean(0, keepdim=True)) / hpreact.std(0, keepdim=True)) + bnbias
+    hpreact = bngain * ((hpreact - bnmean) / bnstd) + bnbias
+
+    h = torch.tanh(hpreact)
+    # h = torch.tanh(emb.view(-1, n_embed * block_size) @ W1 + b1)
+    logits = h @ W2 + b2
+    loss = F.cross_entropy(logits, Ydev)
+    print(f"Loss for valid split {loss}")
 
 
 g = torch.Generator().manual_seed(500)
@@ -113,9 +150,40 @@ for _ in range(20):
     context = [0] * block_size  # initialize with all ...
     while True:
         emb = C[torch.tensor([context])]  # (1,block_size,d) 1, 3, 10
-        h = torch.tanh(emb.view(1, -1) @ W1 + b1)
+        hpreact = emb.view(1, -1) @ W1 + b1
+            # print("a----")
+            # print(f"{hpreact!r}")
+            # print(f"{hpreact.shape}")
+            # print("mean----")
+        # print(f"{hpreact.mean(0, keepdim=True)}")
+            # print(f"{hpreact.mean()}")
+            # print("std----")
+            # print(f"{hpreact.std()}")
+            # print("----")
+        # print(f"{hpreact - hpreact.mean(0, keepdim=True)}")
+            # print(f"{hpreact - hpreact.mean()}")
+            # print("----")
+        # hpreact = bngain * ((hpreact - hpreact.mean(0, keepdim=True)) / hpreact.std(0, keepdim=True)) + bnbias
+        # hpreact = bngain * hpreact + bnbias
+
+        # print(hpreact.shape)
+        # print(bnmean.shape)
+        # print("-~~-")
+        # print(hpreact - bnmean)
+        # print("-~~-")
+        # print("-~~-")
+        # print("-~~-")
+
+        hpreact = bngain * ((hpreact - bnmean) / bnstd) + bnbias
+            # print(f"{hpreact!r}")
+            # print("----")
+        h = torch.tanh(hpreact)
+        # h = torch.tanh(emb.view(1, -1) @ W1 + b1)
         logits = h @ W2 + b2
+        # print(f"{logits!r}")
         probs = F.softmax(logits, dim=1)
+        # print("----")
+        # print(f"{probs!r}")
         ix = torch.multinomial(probs, num_samples=1, generator=g).item()
         context = context[1:] + [ix]
         out.append(ix)
