@@ -2,7 +2,7 @@ import torch
 import matplotlib.pyplot as plt
 import torch.nn.functional as F
 
-with open("names.txt", "r") as f:
+with open("../names.txt", "r") as f:
     words = f.read().splitlines()
 
 chars = sorted(set("".join(words)))
